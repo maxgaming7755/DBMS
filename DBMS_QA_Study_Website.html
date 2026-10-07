@@ -1,0 +1,89 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DBMS Lab Q&A</title><style>
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}header{background:linear-gradient(135deg,#172554,#315efb);color:white;text-align:center;padding:38px 15px}header h1{margin:0 0 8px}.wrap{max-width:1050px;margin:auto;padding:20px}.tools{position:sticky;top:0;background:#f5f7fb;padding:12px 0;display:flex;gap:8px;z-index:2}input,select,button{padding:10px;border:1px solid #ddd;border-radius:9px}input{flex:1}.card{background:white;border:1px solid #e2e5ea;border-radius:14px;margin:12px 0;overflow:hidden}.q{padding:16px;display:flex;align-items:center;gap:10px}.q h3{margin:0;flex:1}.q button{background:#315efb;color:white;border:0;cursor:pointer}.a{display:none;border-top:1px solid #e5e7eb;padding:18px}.a.show{display:block}pre{background:#101828;color:#e6edf3;padding:15px;border-radius:9px;overflow:auto;position:relative}.copy{position:absolute;right:8px;top:8px;background:#344054;color:#fff;border:0}.tag{font-size:11px;background:#eef3ff;color:#315efb;padding:5px 8px;border-radius:20px}.hidden{display:none}h2{margin-top:35px;color:#172554}footer{text-align:center;color:#667085;padding:30px}@media(max-width:600px){.tools{position:static;flex-wrap:wrap}.q{align-items:flex-start;flex-wrap:wrap}}
+</style></head><body><header><h1>DBMS Lab Internal – Question & Answer</h1><p>Questions 1, 3, 5 & 7 • B.Tech III Semester • DBMS</p></header><div class="wrap"><div class="tools"><input id="search" placeholder="Search question or SQL..."><select id="filter"><option value="all">All</option><option value="1">Q1</option><option value="3">Q3</option><option value="5">Q5</option><option value="7">Q7</option></select><button onclick="allA(true)">Show All</button><button onclick="allA(false)">Hide All</button></div>
+<section data-q="1"><h2>Question 1 – University Database</h2>
+<div class="card"><div class="q"><h3>1(a) Schema Creation (DDL)</h3><span class="tag">DDL</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>CREATE TABLE Department (DeptID INT PRIMARY KEY, DeptName VARCHAR(100) NOT NULL, Location VARCHAR(100));
+
+CREATE TABLE Faculty (FacultyID INT PRIMARY KEY, FacultyName VARCHAR(100) NOT NULL, DeptID INT, Email VARCHAR(100), FOREIGN KEY (DeptID) REFERENCES Department(DeptID));
+
+CREATE TABLE Student (StudentID INT PRIMARY KEY, StudentName VARCHAR(100) NOT NULL, DOB DATE, DeptID INT, Email VARCHAR(100), FOREIGN KEY (DeptID) REFERENCES Department(DeptID));
+
+CREATE TABLE Course (CourseID INT PRIMARY KEY, CourseName VARCHAR(100) NOT NULL, DeptID INT, Credits INT, FOREIGN KEY (DeptID) REFERENCES Department(DeptID));
+
+CREATE TABLE Enrollment (EnrollmentID INT PRIMARY KEY, StudentID INT, CourseID INT, Semester VARCHAR(20), Grade VARCHAR(5), FOREIGN KEY (StudentID) REFERENCES Student(StudentID), FOREIGN KEY (CourseID) REFERENCES Course(CourseID));</pre><p><b>Remember:</b> Primary Key = unique row identifier. Foreign Key = relationship between tables.</p></div></div>
+<div class="card"><div class="q"><h3>1(b1) Students in Computer Science</h3><span class="tag">JOIN</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT s.*
+FROM Student s
+JOIN Department d ON s.DeptID = d.DeptID
+WHERE d.DeptName = 'Computer Science';</pre></div></div>
+<div class="card"><div class="q"><h3>1(b2) Courses with faculty names</h3><span class="tag">JOIN</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT c.CourseName, f.FacultyName
+FROM Course c
+JOIN Faculty f ON c.DeptID = f.DeptID;</pre><p>This follows the answer you supplied: course and faculty are matched through DeptID.</p></div></div>
+<div class="card"><div class="q"><h3>1(b3) Student enrollments with grades</h3><span class="tag">JOIN</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT e.EnrollmentID, s.StudentName, c.CourseName, e.Semester, e.Grade
+FROM Enrollment e
+JOIN Student s ON e.StudentID = s.StudentID
+JOIN Course c ON e.CourseID = c.CourseID;</pre></div></div>
+<div class="card"><div class="q"><h3>1(b4) Count students in each department</h3><span class="tag">GROUP BY</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT d.DeptName, COUNT(s.StudentID) AS TotalStudents
+FROM Department d
+LEFT JOIN Student s ON d.DeptID = s.DeptID
+GROUP BY d.DeptID, d.DeptName;</pre></div></div>
+<div class="card"><div class="q"><h3>1(b5) Departments with locations</h3><span class="tag">SELECT</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT DeptName, Location
+FROM Department;</pre></div></div>
+<div class="card"><div class="q"><h3>1(b6) Faculty with department names</h3><span class="tag">JOIN</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT f.FacultyName, d.DeptName
+FROM Faculty f
+JOIN Department d ON f.DeptID = d.DeptID;</pre></div></div></section>
+<section data-q="3"><h2>Question 3 – SQL Functions</h2>
+<div class="card"><div class="q"><h3>3.1 String Functions</h3><span class="tag">STRING</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT UPPER(DeptName), LOWER(Location) FROM Department;
+SELECT CONCAT(FacultyName, ' - ', Email) AS FacultyDetails FROM Faculty;
+SELECT SUBSTRING(StudentName, 1, 3) FROM Student;
+SELECT StudentName, LENGTH(StudentName) AS NameLength FROM Student;</pre><p>UPPER/LOWER = case conversion • CONCAT = combine text • SUBSTRING = extract part • LENGTH = string length.</p></div></div>
+<div class="card"><div class="q"><h3>3.2 Numeric Functions</h3><span class="tag">NUMERIC</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT ROUND(123.4567, 2);
+SELECT ABS(-50);
+SELECT CEIL(45.2), FLOOR(45.8);
+SELECT MOD(10, 3), POWER(2, 3);</pre><p>ROUND = round number • ABS = absolute value • CEIL/FLOOR = upper/lower integer • MOD = remainder • POWER = exponent.</p></div></div>
+<div class="card"><div class="q"><h3>3.3 Date and Time Functions</h3><span class="tag">DATE</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT CURRENT_DATE();
+SELECT StudentName, EXTRACT(YEAR FROM DOB) AS BirthYear FROM Student;
+SELECT DATEDIFF(CURRENT_DATE(), DOB) AS AgeInDays FROM Student;
+SELECT DATE_ADD(CURRENT_DATE(), INTERVAL 7 DAY);</pre><p>These functions return or calculate date/time information. Exact syntax can vary by DBMS.</p></div></div></section>
+<section data-q="5"><h2>Question 5 – Joins and Set Operations</h2>
+<div class="card"><div class="q"><h3>5.1 Inner Join</h3><span class="tag">INNER</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT Student.StudentName, Enrollment.Grade
+FROM Student
+INNER JOIN Enrollment ON Student.StudentID = Enrollment.StudentID;</pre><p>Returns matching rows from both tables.</p></div></div>
+<div class="card"><div class="q"><h3>5.2 Equi-Join</h3><span class="tag">=</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT Faculty.FacultyName, Department.DeptName
+FROM Faculty, Department
+WHERE Faculty.DeptID = Department.DeptID;</pre></div></div>
+<div class="card"><div class="q"><h3>5.3 Natural Join</h3><span class="tag">NATURAL</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT *
+FROM Student
+NATURAL JOIN Department;</pre></div></div>
+<div class="card"><div class="q"><h3>5.4 Left Outer Join</h3><span class="tag">LEFT</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT Department.DeptName, Student.StudentName
+FROM Department
+LEFT OUTER JOIN Student ON Department.DeptID = Student.DeptID;</pre></div></div>
+<div class="card"><div class="q"><h3>5.5 Right Outer Join</h3><span class="tag">RIGHT</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT Student.StudentName, Department.DeptName
+FROM Student
+RIGHT OUTER JOIN Department ON Student.DeptID = Department.DeptID;</pre></div></div>
+<div class="card"><div class="q"><h3>5.6 Full Outer Join</h3><span class="tag">FULL</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT Student.StudentName, Department.DeptName
+FROM Student
+FULL OUTER JOIN Department ON Student.DeptID = Department.DeptID;</pre><p>Support for FULL OUTER JOIN varies by DBMS.</p></div></div>
+<div class="card"><div class="q"><h3>5.7 UNION</h3><span class="tag">SET</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT DeptID FROM Department
+UNION
+SELECT DeptID FROM Student;</pre></div></div>
+<div class="card"><div class="q"><h3>5.8 INTERSECT</h3><span class="tag">SET</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT DeptID FROM Faculty
+INTERSECT
+SELECT DeptID FROM Student;</pre></div></div>
+<div class="card"><div class="q"><h3>5.9 Set Difference</h3><span class="tag">EXCEPT / MINUS</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT DeptID FROM Department
+EXCEPT
+SELECT DeptID FROM Student;</pre><p>Some DBMS use MINUS instead of EXCEPT.</p></div></div></section>
+<section data-q="7"><h2>Question 7 – Views and Materialized Views</h2>
+<div class="card"><div class="q"><h3>7.1 Create Standard View</h3><span class="tag">VIEW</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><p><b>Definition:</b> A virtual table defined by a saved SQL query.</p><pre><button class="copy" onclick="cp(this)">Copy</button>CREATE VIEW CS_Students_View AS
+SELECT StudentID, StudentName, Email
+FROM Student
+WHERE DeptID = (SELECT DeptID FROM Department WHERE DeptName = 'Computer Science');</pre></div></div>
+<div class="card"><div class="q"><h3>7.2 Query View</h3><span class="tag">SELECT</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT * FROM CS_Students_View;</pre></div></div>
+<div class="card"><div class="q"><h3>7.3 Create Materialized View</h3><span class="tag">MATERIALIZED</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><p><b>Definition:</b> A view whose result set is physically stored and can be refreshed periodically.</p><pre><button class="copy" onclick="cp(this)">Copy</button>CREATE MATERIALIZED VIEW Department_Student_Count AS
+SELECT d.DeptName, COUNT(s.StudentID) AS TotalStudents
+FROM Department d
+LEFT JOIN Student s ON d.DeptID = s.DeptID
+GROUP BY d.DeptName;</pre></div></div>
+<div class="card"><div class="q"><h3>7.4 Query Materialized View</h3><span class="tag">SELECT</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>SELECT * FROM Department_Student_Count;</pre></div></div>
+<div class="card"><div class="q"><h3>7.5 Refresh Materialized View</h3><span class="tag">REFRESH</span><button onclick="tog(this)">Show Answer</button></div><div class="a"><pre><button class="copy" onclick="cp(this)">Copy</button>REFRESH MATERIALIZED VIEW Department_Student_Count;</pre><p>Materialized-view syntax/support depends on the DBMS.</p></div></div></section>
+<footer>Q1 = Schema + Queries • Q3 = Functions • Q5 = Joins + Sets • Q7 = Views</footer></div>
+<script>const cards=[...document.querySelectorAll('.card')];function tog(b){let a=b.parentElement.nextElementSibling;a.classList.toggle('show');b.textContent=a.classList.contains('show')?'Hide Answer':'Show Answer'}function allA(v){cards.forEach(c=>{let a=c.querySelector('.a'),b=c.querySelector('.q button');a.classList.toggle('show',v);b.textContent=v?'Hide Answer':'Show Answer'})}function cp(b){let p=b.parentElement.cloneNode(true);p.querySelector('.copy').remove();navigator.clipboard.writeText(p.innerText);b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',800)}function filt(){let s=document.getElementById('search').value.toLowerCase(),f=document.getElementById('filter').value;document.querySelectorAll('section[data-q]').forEach(sec=>{let oksec=f==='all'||f===sec.dataset.q,any=false;sec.querySelectorAll('.card').forEach(c=>{let ok=oksec&&c.innerText.toLowerCase().includes(s);c.classList.toggle('hidden',!ok);if(ok)any=true});sec.classList.toggle('hidden',!any)})}document.getElementById('search').oninput=filt;document.getElementById('filter').onchange=filt;</script></body></html>
